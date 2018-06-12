@@ -27,19 +27,22 @@ if (!String.prototype.formatString) {
         /*
         Count the number on each day and store the object
         */
-        var processListTimeStamp = function(list_timestamp){
+        var processListTimeStamp = function(data){
 
-          //The result will store into this varriable
+          //The result will store into this variable
           obj_timestamp = {};
-          for (var i=0; i < list_timestamp.length; i++){
-            var _d = new Date( list_timestamp[i] );
+          for (var i=0; i < data.length; i++){
+            var _d = new Date( data.date ).valueOf();
             var display_date = getDisplayDate( _d );
-            if ( !obj_timestamp[ display_date ] ){
-              obj_timestamp[ display_date ] = 1;
-            }
-            else{
+
+              obj_timestamp[ display_date ] = {
+                  count: data[i].count,
+                  time: data[i].time,
+              };
+
+           /* else{
               obj_timestamp[ display_date ]++;
-            }
+            }*/
           }
         }
 
@@ -51,7 +54,7 @@ if (!String.prototype.formatString) {
 
         var getCount = function( display_date ){
           if ( obj_timestamp[ display_date ] ){
-            return obj_timestamp[ display_date];
+            return obj_timestamp[ display_date].count;
           }
           return 0;
         }
@@ -62,6 +65,13 @@ if (!String.prototype.formatString) {
           }
           return settings.colors[ count ];
         }
+        var getTime = function(data_date) {
+            if ( obj_timestamp[ data_date ] ){
+                return obj_timestamp[ data_date].time;
+            }
+            return "0h 0m";
+        }
+
 
         var start = function(){
           processListTimeStamp( settings.data );
@@ -117,8 +127,10 @@ if (!String.prototype.formatString) {
               start_date.setDate( start_date.getDate() + 1 );
               var count = getCount( data_date );
               var color = getColor( count );
+              let time = getTime(data_date);
 
-              item_html += '<rect class="day" width="11" height="11" y="'+ y +'" fill="'+ color + '" data-count="'+ count +'" data-date="'+ data_date +'"/>';
+              item_html += `<rect class="day" width="11" height="11" y="${y}" fill="'${color}" data-time="${time}"
+                                    data-count="${count}" data-date="${data_date}"/>`;
             }
 
             item_html += "</g>";
@@ -177,9 +189,10 @@ if (!String.prototype.formatString) {
           var target_offset = $(evt.target).offset();
           var count = $(evt.target).attr('data-count');
           var date = $(evt.target).attr('data-date');
+          var time  = $(evt.target).attr('data-time');
           
           var count_text = ( count > 1 ) ? settings.texts[1]: settings.texts[0];
-          var text = "{0} {1} on {2}".formatString( count, count_text , date );
+          var text = "{0} {1} on {2}".formatString( time, count_text , date );
 
           var svg_tip = $('.svg-tip').show();
           svg_tip.html( text );
