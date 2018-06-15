@@ -1,6 +1,6 @@
 {
   "name": "github-contribution-graph",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Jquery plugin to render like contribution graph on Github when you view user's profile, You can use it to apply on other JS framework like Angularjs as well.",
   "main": "index.js",
   "scripts": {
